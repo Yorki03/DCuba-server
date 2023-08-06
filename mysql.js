@@ -4,7 +4,7 @@ const mysqlConnet = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: ''
+    database: 'dcuba_db'
 });
 
 mysqlConnet.connect(function(err){
