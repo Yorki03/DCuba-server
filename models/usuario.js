@@ -13,14 +13,39 @@ UserModel.getAllUsers = (callback) => {
   });
 };
 
+// Obtener los datos que coiciden en tabla usuario y tabla jugadores
+UserModel.getMatchsUser = () => {
+  mysqlConnect.query(`SELECT usuario.nombre, usuario.apellidos,usuario.telefono, jugadores.nombre, jugadores.apellidos, jugadores.telefono
+    FROM usuario INNER JOIN jugadores ON usuario.telefono = jugadores.telefono`,  (error, result) => {
+  if (error) {
+    throw error;
+  }else{
+    console.log(result + 'Peticion exitosa Coicidencias');
+  }
+});
+};
+
 // Crear un nuevo usuario
-UserModel.createUser = (nombre,  apellidos, email, telefono, password) => {
+UserModel.createUser = (nombre,  apellidos, email, telefono) => {
   mysqlConnect.query('INSERT INTO usuario( nombre, apellidos, email, telefono, password) VALUES (?,?,?,?,?)', 
     [nombre, apellidos, email, telefono, password], (error, result) => {
     if (error) {
       throw error;
     }else{
       console.log(result + 'Usuario Creado');
+    }
+    
+  });
+};
+
+// Crear Jugador en la DB
+UserModel.createJugador = (nombre,  apellidos, telefono) => {
+  mysqlConnect.query('INSERT INTO jugadores( nombre, apellidos, telefono) VALUES (?,?,?)', 
+    [nombre, apellidos, telefono,], (error, result) => {
+    if (error) {
+      throw error;
+    }else{
+      console.log(result + 'Jugador Creado');
     }
     
   });
@@ -38,30 +63,6 @@ UserModel.getUserByName = (telefono) => {
 });
 };
 
-//Obtener Email de ususario
-UserModel.getUserByEmail = (telefono) => {
-  mysqlConnect.query('SELECT email FROM usuario WHERE telefono = ?', telefono, (error, result) => {
-  if (error) {
-    throw error;
-  }else{
-    console.log(result + 'Peticion exitosa');
-  }
-  
-});
-};
-
-
-// Obtener usuarios por su Telefono
-UserModel.getUserByMovil = (telefono) => {
-    mysqlConnect.query('SELECT * FROM usuario WHERE telefono = ?', telefono, (error, result) => {
-    if (error) {
-      throw error;
-    }else{
-      console.log(result + 'Peticion exitosa');
-    }
-    
-  });
-};
 
 // Obtener el ID del usuario
 UserModel.getUserById = (telefono) => {
@@ -69,32 +70,32 @@ UserModel.getUserById = (telefono) => {
     if (error) {
       throw error;
     }else{
-      console.log(result + 'Peticion exitosa');
+      console.log(result + 'Peticion exitosa ID usuario');
     }
   });
-};
-
-// Obtener el password del usuario
-UserModel.getUserByPassword = (idUsuario) => {
-  mysqlConnect.query('SELECT password FROM usuario WHERE id_usuario= ?', idUsuario, (error, result) => {
-  if (error) {
-    throw error;
-  }else{
-    console.log(result + 'Peticion exitosa');
-  }
-  
-});
 };
 
 
 // Eliminar un usuario
-UserModel.deleteUser = (userId, callback) => {
+UserModel.deleteUser = (userId) => {
     mysqlConnect.query('DELETE FROM usuario WHERE id = ?', userId, (error, result) => {
     if (error) {
       throw error;
+    }else{
+      console.log('Usuario eliminado');
     }
-    callback();
   });
+};
+
+// Eliminar un jugador
+UserModel.deleteGamer = (userId) => {
+  mysqlConnect.query('DELETE FROM jugadores WHERE id = ?', userId, (error, result) => {
+  if (error) {
+    throw error;
+  }else{
+    console.log('Jugador eliminado');
+  }
+});
 };
 
 // Exportar el modelo de usuario

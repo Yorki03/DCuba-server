@@ -2,41 +2,28 @@ const { response } = require('express');
 const UserModel = require('../models/usuario');
 const bcrypt = require('bcryptjs');
 const{ generarToken } = require('../utils/jwt');
+const { async } = require('rxjs');
 
 const crearUsuario =  async(req, res = response) => {
    
     try {
-        const {nombre, apellidos, email, telefono, password} = req.body;
-
-        //Verificar correo existente
-        let usuario = await UserModel.getUserByMovil(telefono);
-        if (usuario) {
-            return res.status(400).json({
-                ok: false,
-                msg:'Un usuario ya existe con ese correo'
-            });
-        }
-
-        //Hashear el password
-        const salt = bcrypt.genSaltSync();
-
-        //Generar el JWT
-        const token = await generarToken(telefono);
+        const {nombre, apellidos, email, telefono} = req.body;
         
         //Crear usuario en base de datos
-        await UserModel.createUser(nombre, apellidos, email, telefono, bcrypt.hashSync(password, salt));
+        await UserModel.createUser(nombre, apellidos, email, telefono);
 
         //Generar respuesta exitosa
         return res.status(201).json({
-            ok: true,
-            nombre,
-            token
+          ok: true,
+          nombre,
+          apellidos,
+          msg:'Creado Exitosamente.'             
         })
         
     } catch (error) {
         console.log(error);
         return res.json({
-            ok:true,
+            ok:false,
             msg: 'Crear usuario /new'
         });
     }
@@ -44,84 +31,21 @@ const crearUsuario =  async(req, res = response) => {
     
 }
 
-const loginUsuario = async(req, res = response) => {
+const jugadores = async(req, res = response) => {
     
-    const {telefono, password} = req.body
+    const {nombre, apellidos, telefono } = req.body
 
     try {
 
-        //Comprobar si el Telefono es correcto
-        let usuario;
-        UserModel.getUserByMovil(telefono, (error, result) => {
-          if (error) {
-            throw error;
-          } else {
-            if (result.length === 0) {
-              return res.status(400).json({
-                ok: false,
-                msg: 'El correo no existe'
-              });
-            } else {
-              usuario = result[0];
-            }
-          }
-        })
-       
-        //Comprobar si el password es correcto
-        let idUsuario; 
-        UserModel.getUserById(telefono, (error, result) => {
-            if (error) {
-                throw error;
-              } else {
-                if (result.length === 0) {
-                  return res.status(400).json({
-                    ok: false,
-                  });
-                } else {
-                    idUsuario = result[0];
-                    if (idUsuario) {
-                        let passwordUser; 
-                        UserModel.getUserByPassword(idUsuario, (error, result) => {
-                            if (error) {
-                                throw error;
-                              } else {
-                                if (result.length === 0) {
-                                  return res.status(400).json({
-                                    ok: false,
-                                  });
-                                } else {
-                                    passwordUser = result[0];
-                                }
-                            }
-                        });
-                        const passwordMarch = bcrypt.compareSync(password, passwordUser);
-                        if (!passwordMarch) {
-                            res.status(400).json({
-                                ok: false,
-                                msg: 'El password es incorrecto'
-                            });
-                        }
-                    }else{
-                        return res.status(400).json({
-                            ok: false,
-                            msg: 'El correo no existe --- password'
-                        });
-                    }
-                    
-                }
-            }
-        });
+      //Crear Usuario en DB jugadas
+      await UserModel.createJugador(nombre, apellidos, telefono);
 
-
-        //Generar el JWT
-        const token = await generarToken(telefono)
-
-        //Respuesta del servicio
-        return res.status(201).json({
-            ok: true,
-            telefono,
-            token
-        });
+      //Respuesta del servicio 
+      return res.status(201).json({
+        ok: true,
+        nombre,          
+        msg: 'Bienvenido al Juego'
+       });
         
     } catch (error) {
         console.log(error);
@@ -132,6 +56,80 @@ const loginUsuario = async(req, res = response) => {
     }
     
    
+}
+
+const eliminarUsuario = async(req, res = response) =>{
+  const id = req.params.id;
+
+  try {
+    //Eliminar usuario
+    await UserModel.deleteUser(id);
+
+    //Respuesta del servicio
+    return res.status(201).json({
+      ok: true,
+      msg:'El usuario ha sido eliminado'
+    })
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: 'Hable con el Administrador'
+    });
+  }
+}
+
+const eliminarJugador = async(req, res = response) =>{
+  const id = req.params.id;
+
+  try {
+    //Eliminar jugador
+    await UserModel.deleteGamer(id);
+
+    //Respuesta del servicio
+    return res.status(201).json({
+      ok: true,
+      msg:'El usuario ha sido eliminado'
+    })
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: 'Hable con el Administrador'
+    });
+  }
+}
+
+const coicidenciaUsuario = async(req, res = response) =>{
+  try {
+    //Llamar a todas las coicidencias de usuarios
+    const usuarios = await UserModel.getMatchsUser();
+    if (!usuarios) {
+      //No se enconto coicidencias
+      res.status(400).json({
+        ok: false,
+        msg: 'No hay coicidencias de usuarios'
+      })
+    } else {
+      //Respuesta del servicio
+      return res.status(201).json({
+        ok: true,
+        usuarios,
+        msg:'Ususarios encontrados'
+      })
+    }
+
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: 'Hable con el Administrador'
+    });
+  }
+
 }
 
 const tokenUsuario = (req, res = response) => {
@@ -146,6 +144,9 @@ const tokenUsuario = (req, res = response) => {
 
 module.exports = {
     crearUsuario,
-    loginUsuario,
+    jugadores,
+    eliminarUsuario,
+    eliminarJugador,
+    coicidenciaUsuario,
     tokenUsuario
 }

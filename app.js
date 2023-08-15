@@ -110,6 +110,20 @@ app.get('/pagos-diarios', (req, res) => {
   });
 });
 
+//informacion de los pagos 
+app.get('buscar-soportes', (req, res) =>{
+  const sql = 'SELECT * FROM soporte';
+
+  mysqlConnect.query(sql, (err, row) =>{
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: 'Error al buscar los soportes' });
+    } else {
+      res.json(row);
+    }
+  })
+});
+
 /**ITRODUCCION DE INFORMACION A LA BASE DE DATOS**/
 //Jugada centena echa por el usuario
 app.post('/centena', (req, res) => {
@@ -156,6 +170,52 @@ app.post('/normal', (req, res) =>{
     }
   });
 });
+
+//Colocar los nuemeros en Tabla limitados dias
+app.post('/limitados-dia2', (req, res) =>{
+  const {numero, fecha} = req.body;
+  const sql = 'INSERT INTO limitados_dia(numero, fecha) VALUES (?,?)';
+
+  mysqlConnect.query(sql, [numero, fecha], (err, row) =>{
+    if (err) {
+      console.log(err);
+      res.static(500).json({error: 'Error al ejecutar la accion'})
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+//Colocar los nuemeros en Tabla limitados noches
+app.post('/limitados-noche2', (req, res) =>{
+  const {numero, fecha} = req.body;
+  const sql = 'INSERT INTO limitados_noche(numero, fecha) VALUES (?,?)';
+
+  mysqlConnect.query(sql, [numero, fecha], (err, row) =>{
+    if (err) {
+      console.log(err);
+      res.static(500).json({error: 'Error al ejecutar la accion'})
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+//Introducir mensaje de soporte
+app.post('/soporte', (req, res)=>{
+  const mensaje = req.body;
+  const sql = 'INSERT INTO soporte(mensaje) VALUES (?)'
+
+  mysqlConnect.query(sql, mensaje, (err, rew) =>{
+    if (err) {
+      console.log(err);
+      res.static(500).json({error: 'Error al enviar el mensaje'})
+    } else {
+      res.json(row);
+    }
+  });
+})
+
 
 /**************************************************************************************************************/
 
