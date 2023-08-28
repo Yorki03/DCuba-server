@@ -5,7 +5,8 @@ const {
     eliminarUsuario, 
     tokenUsuario, 
     coicidenciaUsuario,
-    eliminarJugador
+    eliminarJugador,
+    idJugadores
 } = require('../controllers/auth.controller');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
@@ -26,7 +27,6 @@ routes.post('/new', [
 //Autenticacion
 routes.post('/', [
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-    check('apellidos', 'El apellidos son obligatorio').not().isEmpty(),
     check('telefono', 'El telefono es obligatorio').not().isEmpty(),
     validarCampos
 ], jugadores);
@@ -39,6 +39,9 @@ routes.delete('/eliminar-jugador/:id', eliminarJugador);
 
 //Coicidencia de Usuarios con Jugadores
 routes.get('/coicidencia', coicidenciaUsuario);
+
+//Buscar jugador por su telefono
+routes.get('/id', idJugadores)
 
 //Validar el Token
 routes.get('/renew', validarJWT, tokenUsuario);

@@ -20,11 +20,11 @@ app.use('/auth', require('./routes/auth'));
 
 /**PERTICIONES DE INFORMACION A LA BASE DE DATOS**/
 //Informacion de la Tabla Jugadas Centenas
-app.get('/jugadas-centenas', (req, res) => {
-  const {fecha} = req.body;
-  const sql = 'SELECT * FROM jugadas_centenas WHERE fecha= ?'
+app.get('/jugadas_centenas', (req, res) => {
+  
+  const sql = 'SELECT * FROM jugadas_centenas'
 
-  mysqlConnect.query(sql, [fecha], (err, row) => {
+  mysqlConnect.query(sql, (err, row) => {
     if (err) {
       console.log(err);
       res.status(500).json({ error: 'Error al buscar la centena.' });
@@ -32,14 +32,14 @@ app.get('/jugadas-centenas', (req, res) => {
       res.json(row);
     }
   });
-});
+}); 
 
 //Informacion de la Tabla Jugadas Parles
-app.get('/jugadas-parles', (req, res) => {
-  const {fecha} = req.body;
-  const sql = 'SELECT * FROM jugadas_parles WHERE fecha= ?'
+app.get('/jugadas_parles', (req, res) => {
+  
+  const sql = 'SELECT * FROM jugadas_parles'
 
-  mysqlConnect.query(sql, [fecha], (err, row) => {
+  mysqlConnect.query(sql, (err, row) => {
     if (err) {
       console.log(err);
       res.status(500).json({ error: 'Error al buscar el parle.' });
@@ -50,61 +50,82 @@ app.get('/jugadas-parles', (req, res) => {
 });
 
 //Informacion de la Tabla Jugadas Normales
-app.get('/jugadas-normales', (req, res) => {
-  const {fecha} = req.body;
-  const sql = 'SELECT * FROM jugadas_normales WHERE fecha= ?'
+app.get('/jugadas_normales', (req, res) => {
+  
+  const sql = 'SELECT * FROM jugadas_normales'
 
-  mysqlConnect.query(sql, [fecha], (err, row) => {
+  mysqlConnect.query(sql, (err, row) => {
     if (err) {
       console.log(err);
       res.status(500).json({ error: 'Error al buscar la jugada.' });
     } else {
-      res.json(row);
+      res.json(row); 
     }
   });
 });
 
 //Informacion de la Tabla Noche
-app.get('/limitados-noche', (req, res) => {
-  const {fecha} = req.body;
-  const sql = 'SELECT * FROM limitados_noche WHERE fecha= ?'
+app.get('/limitados_noche', (req, res) => {
 
-  mysqlConnect.query(sql, [fecha], (err, row) => {
+  const sql = 'SELECT * FROM limitados_noche';
+
+  mysqlConnect.query(sql, (err, row) => {
     if (err) {
       console.log(err);
       res.status(500).json({ error: 'Error al buscar los limitados de noche.' });
     } else {
-      res.json(row);
+      res.json(row); 
     }
-  });
+  }); 
 }); 
 
 //Informacion de la Tabla Dia
 app.get('/limitados-dia', (req, res) => {
-  const {fecha} = req.body;
-  const sql = 'SELECT * FROM limitados_dia WHERE fecha= ?'
+  const sql = 'SELECT * FROM limitados_dia';
 
-  mysqlConnect.query(sql, [fecha], (err, row) => {
+  mysqlConnect.query(sql, (err, row) => {
     if (err) {
       console.log(err);
-      res.status(500).json({ error: 'Error al buscar los limitados de dia.' });
+      res.status(500).json({ error: 'Error al buscar los limitados de dia.' }); 
     } else {
       res.json(row);
     }
   });
 });
 
-//Informacion de los pagos por dia
-app.get('/pagos-diarios', (req, res) => {
+//Busqueda de premios en la Tabla "Juganas Normales"
 
-  const {fecha, pagos} = req.body;
-  const sql = 'SELECT * FROM pagos WHERE fecha=? AND horario=?'
+//Busqueda de premios en la Tabla "Juganas Centena"
 
-  mysqlConnect.query(sql, [fecha, pagos], (err, row) => {
-    if (err) {
+//Busqueda de premios en la Tabla "Juganas Corricos"
+
+//Busqueda de premios en la Tabla "Juganas Parles"
+
+//Informacion de numeros salidos
+app.get('/numero-dia', (req, res) => {
+  const estado = 'dia';
+  const sql = `SELECT * FROM numeros_salidos WHERE estado= ?`;
+
+  mysqlConnect.query(sql, [estado], (err, row) =>{
+    if(err){
       console.log(err);
-      res.status(500).json({ error: 'Error al buscar los limitados de dia.' });
-    } else {
+      res.status(500).json({error: 'Error al buscar los numeros del dia.'});
+    }else{
+      res.json(row);
+    }
+  });
+}); 
+
+//Informacion de numeros salidos
+app.get('/numero-noche', (req, res) => {
+  const estado = 'noche';
+  const sql = `SELECT * FROM numeros_salidos WHERE estado= '${estado}'`;
+
+  mysqlConnect.query(sql, (err, row) =>{
+    if(err){
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los numeros de la noche.'});
+    }else{
       res.json(row);
     }
   });
@@ -127,15 +148,18 @@ app.get('buscar-soportes', (req, res) =>{
 /**ITRODUCCION DE INFORMACION A LA BASE DE DATOS**/
 //Jugada centena echa por el usuario
 app.post('/centena', (req, res) => {
-  const {numero, dinero, fecha, id_usuario} = req.body;
-  const sql = 'INSERT INTO jugadas_centenas(numero, dinero, fecha, id_usuario) VALUES (?,?,?,?)';
+  const { dinero, numero, estado, telefono, id_numero} = req.body;
+  const sql = 'INSERT INTO jugadas_centenas(dinero, numero, estado, telefono, id_numero) VALUES (?,?,?,?,?)';
 
-  mysqlConnect.query(sql, [numero, dinero, fecha, id_usuario], (err,row) =>{
+  mysqlConnect.query(sql, [dinero, numero, estado, telefono, id_numero], (err,row) =>{
     if (err) {
       console.log(err);
       res.status(500).json({error: 'Error al introducir la jugada'});
     } else {
-      res.json(row);
+      res.status(201).json({
+        ok: true,
+        msg: 'Jugada exitosa'
+      });
     }
   });
 
@@ -143,30 +167,53 @@ app.post('/centena', (req, res) => {
 
 //Jugadas parles echas por el usuario
 app.post('/parles', (req, res) =>{
-  const {dinero, id_numero1, id_numero2, fecha, id_usuario} = req.body;
-  const sql = 'INSERT INTO jugadas_parles(dinero, fecha, id_numero1, id_numero2, id_usuario) VALUES (?,?,?,?,?)';
+  const {dinero, telefono, estado, id_numero1, id_numero2,} = req.body;
+  const sql = 'INSERT INTO jugadas_parles(dinero, telefono, estado, id_numero1, id_numero2) VALUES (?,?,?,?,?)';
 
-  mysqlConnect.query(sql, [dinero, fecha, id_numero1, id_numero2, id_usuario], (err, row) =>{
+  mysqlConnect.query(sql, [dinero, telefono, estado, id_numero1, id_numero2], (err, row) =>{
     if (err) {
       console.log(err);
       res.status(500).json({error: 'Error al introducir la jugada'});
     } else {
-      return res.json(row);
+      res.status(201).json({
+        ok: true,
+        msg: 'Jugada exitosa'
+      })
     }
   });
 });
 
 //Jugadas normales del usuario
 app.post('/normal', (req, res) =>{
-  const {dinero_fijo, dinero_corrido, fecha, id_usuario, id_numero} = req.body;
-  const sql = 'INSERT INTO jugadas_normales (dinero_fijo, dinero_corrido, fecha, id_usuario, id_numero) VALUES ( ?, ?, ?, ?, ?)';
+  const {dinero_fijo,  estado, telefono, id_numero} = req.body;
+  const sql = 'INSERT INTO jugadas_normales (dinero_fijo, estado, telefono, id_numero) VALUES ( ?, ?, ?, ?)';
 
-  mysqlConnect.query(sql, [dinero_fijo, dinero_corrido, fecha, id_usuario, id_numero ], (err, row) =>{
+  mysqlConnect.query(sql, [dinero_fijo, estado, telefono, id_numero ], (err, row) =>{
     if (err) {
       console.log(err);
       res.status(500).json({error: 'Error al introducir la jugada'});
     } else {
-      res.json(row);
+      res.status(201).json({ 
+        ok: true,
+        msg: 'Jugada Exitosa'
+      });
+    }
+  });
+});
+//Jugadas Corridas del usuario
+app.post('/corridas', (req, res) =>{
+  const sql = 'INSERT INTO jugadas_corridas( telefono, estado, dinero, id_numero) VALUES (?,?,?,?)';
+  const {telefono, estado, dinero, id_numero} = req.body;
+
+  mysqlConnect.query(sql, [telefono, estado, dinero, id_numero], (err, row) =>{
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al introdiir la jugada'})
+    } else {
+      res.status(201).json({
+        ok: true,
+        msg: 'Jugada Exitosa'
+      });
     }
   });
 });

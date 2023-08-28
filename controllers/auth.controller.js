@@ -31,29 +31,51 @@ const crearUsuario =  async(req, res = response) => {
     
 }
 
+const idJugadores = async(req, res = response) =>{
+  const telefono = req.body;
+
+  try {
+    //Buscar un jugador por su Telefono
+    await UserModel.getUserById(telefono);
+
+    //Respuesta del servicio
+    return res.status(201).json({
+      ok: true,
+      telefono,
+      msg:"El Jugador se encontro"
+    })
+    
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: 'Hsble con el Administrador'
+    })
+  }
+}
+
 const jugadores = async(req, res = response) => {
     
-    const {nombre, apellidos, telefono } = req.body
+  const {nombre, telefono } = req.body
 
-    try {
+  try {
+    //Crear Usuario en DB jugadas
+    await UserModel.createJugador(nombre, telefono);
 
-      //Crear Usuario en DB jugadas
-      await UserModel.createJugador(nombre, apellidos, telefono);
-
-      //Respuesta del servicio 
-      return res.status(201).json({
-        ok: true,
-        nombre,          
-        msg: 'Bienvenido al Juego'
-       });
-        
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-        ok: false,
-        msg: 'Hable con el Administrador'
-    });
-    }
+    //Respuesta del servicio 
+    return res.status(201).json({
+      ok: true,
+      nombre,          
+      msg: 'Bienvenido al Juego'
+     });
+      
+  } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+      ok: false,
+      msg: 'Hable con el Administrador'
+  });
+  }
     
    
 }
@@ -148,5 +170,6 @@ module.exports = {
     eliminarUsuario,
     eliminarJugador,
     coicidenciaUsuario,
+    idJugadores,
     tokenUsuario
 }

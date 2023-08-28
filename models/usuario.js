@@ -39,9 +39,9 @@ UserModel.createUser = (nombre,  apellidos, email, telefono) => {
 };
 
 // Crear Jugador en la DB
-UserModel.createJugador = (nombre,  apellidos, telefono) => {
-  mysqlConnect.query('INSERT INTO jugadores( nombre, apellidos, telefono) VALUES (?,?,?)', 
-    [nombre, apellidos, telefono,], (error, result) => {
+UserModel.createJugador = (nombre, telefono) => {
+  mysqlConnect.query('INSERT INTO jugadores( nombre, telefono) VALUES (?,?)', 
+    [nombre, telefono,], (error, result) => {
     if (error) {
       throw error;
     }else{
@@ -66,7 +66,7 @@ UserModel.getUserByName = (telefono) => {
 
 // Obtener el ID del usuario
 UserModel.getUserById = (telefono) => {
-    mysqlConnect.query('SELECT id_usuario FROM usuario WHERE telefono = ?', telefono, (error, result) => {
+    mysqlConnect.query('SELECT id_usuario FROM jugadores WHERE telefono = ?', telefono, (error, result) => {
     if (error) {
       throw error;
     }else{
