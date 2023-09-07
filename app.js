@@ -34,6 +34,21 @@ app.get('/jugadas_centenas', (req, res) => {
   });
 }); 
 
+//Informacion de la Tabla Jugadas Corrida
+app.get('/jugadas_corrida', (req, res) => {
+  
+  const sql = 'SELECT * FROM  jugadas_corridas'
+
+  mysqlConnect.query(sql, (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: 'Error al buscar la corrida.' });
+    } else {
+      res.json(row);
+    }
+  });
+}); 
+
 //Informacion de la Tabla Jugadas Parles
 app.get('/jugadas_parles', (req, res) => {
   
@@ -93,13 +108,223 @@ app.get('/limitados-dia', (req, res) => {
   });
 });
 
-//Busqueda de premios en la Tabla "Juganas Normales"
+//Busqueda de premios en la Tabla "Juganas Normales" - dia
+app.get('/premios-jugadas-dia', (req, res) => {
+  const sql = 'SELECT j.* FROM jugadas_normales j INNER JOIN numeros_salidos ns ON j.id_numero = ns.id_numero AND j.estado = ? AND  j.estado = ns.estado';
+  const estado = 'dia';
 
-//Busqueda de premios en la Tabla "Juganas Centena"
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  })
+});
+//Busqueda de premios en la Tabla "Juganas Normales" - noche
+app.get('/premios-jugadas-noche', (req, res) => {
+  const sql = 'SELECT j.* FROM jugadas_normales j INNER JOIN numeros_salidos ns ON j.id_numero = ns.id_numero AND j.estado = ? AND  j.estado = ns.estado';
+  const estado = 'noche';
 
-//Busqueda de premios en la Tabla "Juganas Corricos"
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  })
+});
 
-//Busqueda de premios en la Tabla "Juganas Parles"
+//Busqueda de premios en la Tabla "Juganas Centena" -dia
+app.get('/premios-centena-dia', (req, res) => {
+  const estado = 'dia'
+  const sql = 'SELECT j.* FROM jugadas_centenas j INNER JOIN numeros_salidos ns ON j.centena = ns.centena AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+//Busqueda de premios en la Tabla "Juganas Centena" -noche
+app.get('/premios-centena-noche', (req, res) => {
+  const estado = 'noche'
+  const sql = 'SELECT j.* FROM jugadas_centenas j INNER JOIN numeros_salidos ns ON j.centena = ns.centena AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    } 
+  });
+});
+/**************************************************************************************************************************************************************/
+/** Premios de Corridos del Dia **/
+//Busqueda de premios en la Tabla "Juganas Corricos" -1
+app.get('/premios-corridos1-dia', (req, res) => {
+  const estado = 'dia';
+  const sql = 'SELECT j.* FROM jugadas_corridas j INNER JOIN numeros_salidos ns ON j.id_numero = ns.numero1_corrido AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+//Busqueda de premios en la Tabla "Juganas Corricos" -2
+app.get('/premios-corridos2-dia', (req, res) => {
+  const estado = 'dia';
+  const sql = 'SELECT j.* FROM jugadas_corridas j INNER JOIN numeros_salidos ns ON j.id_numero = ns.numero2_corrido AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+
+/** Premios de Corridos de la Noche **/
+//Busqueda de premios en la Tabla "Juganas Corricos" -1
+app.get('/premios-corridos1-noche', (req, res) => {
+  const estado = 'noche';
+  const sql = 'SELECT j.* FROM jugadas_corridas j INNER JOIN numeros_salidos ns ON j.id_numero = ns.numero1_corrido AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+//Busqueda de premios en la Tabla "Juganas Corricos" -2
+app.get('/premios-corridos2-noche', (req, res) => {
+  const estado = 'noche';
+  const sql = 'SELECT j.* FROM jugadas_corridas j INNER JOIN numeros_salidos ns ON j.id_numero = ns.numero2_corrido AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+/*********************************************************************************************************************************************************************************************/
+
+/*********************************************************************************************************************************************************************************************/
+//Premios que salieron en el dia
+//Busqueda de premios en la Tabla "Juganas Parles" -fijo con corrido1
+app.get('/premios-parles-dia-fijo1', (req, res) => {
+  const estado = 'dia';
+  const sql = 'SELECT j.* FROM jugadas_parles j INNER JOIN numeros_salidos ns ON ns.id_numero = j.id_numero1 AND j.id_numero2 = ns.numero2_corrido AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+//Busqueda de premios en la Tabla "Juganas Parles" -fijo con corrido2
+app.get('/premios-parles-dia-fijo2', (req, res) => {
+  const estado = 'dia';
+  const sql = 'SELECT j.* FROM jugadas_parles j INNER JOIN numeros_salidos ns ON  ns.id_numero = j.id_numero2  AND j.id_numero1 = ns.numero1_corrido AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+//Busqueda de premios en la Tabla "Juganas Parles" -numeros corridos combinados
+app.get('/premios-parles-dia-corrido', (req, res) => {
+  const estado = 'dia';
+  const sql = 'SELECT j.* FROM jugadas_parles j INNER JOIN numeros_salidos ns ON j.id_numero1 = ns.numero1_corrido AND j.id_numero2 = ns.numero2_corrido AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+//Premios que salieron en e la noche
+//Busqueda de premios en la Tabla "Juganas Parles" -fijo con corrido1
+app.get('/premios-parles-noche-fijo1', (req, res) => {
+  const estado = 'noche';
+  const sql = 'SELECT j.* FROM jugadas_parles j INNER JOIN numeros_salidos ns ON ns.id_numero = j.id_numero1 AND j.id_numero2 = ns.numero2_corrido AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+//Busqueda de premios en la Tabla "Juganas Parles" -fijo con corrido2
+app.get('/premios-parles-noche-fijo2', (req, res) => {
+  const estado = 'noche';
+  const sql = 'SELECT j.* FROM jugadas_parles j INNER JOIN numeros_salidos ns ON  ns.id_numero = j.id_numero2  AND j.id_numero1 = ns.numero1_corrido AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+//Busqueda de premios en la Tabla "Juganas Parles" -numeros corridos combinados
+app.get('/premios-parles-noche-corrido', (req, res) => {
+  const estado = 'noche';
+  const sql = 'SELECT j.* FROM jugadas_parles j INNER JOIN numeros_salidos ns ON j.id_numero1 = ns.numero1_corrido AND j.id_numero2 = ns.numero2_corrido AND j.estado = ? AND j.estado = ns.estado';
+
+  mysqlConnect.query(sql, [estado], (err, row) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'Error al buscar los premios'});
+    } else {
+      res.json(row);
+    }
+  });
+});
+
+/******************************************************************************************************************************************************************************************************/
 
 //Informacion de numeros salidos
 app.get('/numero-dia', (req, res) => {
@@ -130,21 +355,23 @@ app.get('/numero-noche', (req, res) => {
     }
   });
 });
+/*************************************************************************************************************************************************************************************************/
 
-//informacion de los pagos 
-app.get('buscar-soportes', (req, res) =>{
-  const sql = 'SELECT * FROM soporte';
+//Informacion de el dinero jugado en total
+app.get('/dinero_bruto', (req, res) =>{
+  const sql = 'SELECT SUM(dinero_fijo)AS suma_total FROM(SELECT dinero_fijo FROM jugadas_normales UNION ALL SELECT dinero FROM jugadas_corridas UNION ALL SELECT dinero FROM jugadas_centenas UNION ALL SELECT dinero FROM jugadas_parles) AS subconsulta;';
 
   mysqlConnect.query(sql, (err, row) =>{
     if (err) {
       console.log(err);
-      res.status(500).json({ error: 'Error al buscar los soportes' });
+      return res.status(500).json({ error: 'Error al buscar e dinero total' });
     } else {
       res.json(row);
     }
-  })
+  }) 
 });
 
+/**************************************************************************************************************************************************************************************************************************************************************************/
 /**ITRODUCCION DE INFORMACION A LA BASE DE DATOS**/
 //Jugada centena echa por el usuario
 app.post('/centena', (req, res) => {
@@ -248,6 +475,73 @@ app.post('/limitados-noche2', (req, res) =>{
   });
 });
 
+/****************************************************************************************************************************************************/
+//Normales
+app.delete('/eliminar_jugada_normal/:id_jugadas_normales', (req, res) =>{
+  const id_jugadas_normales = req.params.id_jugadas_normales;
+  const sql = 'DELETE FROM jugadas_normales WHERE id_jugadas_normales = ?';
+  mysqlConnect.query(sql, [id_jugadas_normales], (err, row) =>{
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'error al eliminar jugada'});
+    } else {
+      res.json({
+        ok: true,
+        msg: 'Eliminacion exitosa'
+      });
+    }
+  });
+});
+//Centena
+app.delete('/eliminar_jugada_centena/:id_cemtenas', (req, res) =>{
+  const id_cemtenas = req.params.id_cemtenas;
+  const sql = 'DELETE FROM  jugadas_centenas WHERE id_cemtenas = ?';
+  mysqlConnect.query(sql, [id_cemtenas], (err, row) =>{
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'error al eliminar jugada'});
+    } else {
+      res.json({
+        ok: true,
+        msg: 'Eliminacion exitosa'
+      }); 
+    }
+  });
+});
+//Corridas
+app.delete('/eliminar_jugada_corrida/:id_jugadas_corridas', (req, res) =>{
+  const id_jugadas_corridas = req.params.id_jugadas_corridas;
+  const sql = 'DELETE FROM jugadas_corridas WHERE id_jugadas_corridas = ?';
+  mysqlConnect.query(sql, [id_jugadas_corridas], (err, row) =>{
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'error al eliminar jugada'});
+    } else {
+      res.json({
+        ok: true,
+        msg: 'Eliminacion exitosa'
+      });
+    }
+  });
+});
+//Parleses
+app.delete('/eliminar_jugada_parles/:id_parles', (req, res) =>{
+  const id_parles = req.params.id_parles;
+  const sql = 'DELETE FROM  jugadas_parles WHERE id_parles = ?';
+  mysqlConnect.query(sql, [id_parles], (err, row) =>{
+    if (err) {
+      console.log(err);
+      res.status(500).json({error: 'error al eliminar jugada'});
+    } else {
+      res.json({
+        ok: true,
+        msg: 'Eliminacion exitosa'
+      });
+    }
+  });
+});
+
+/****************************************************************************************************************************************************/
 //Introducir mensaje de soporte
 app.post('/soporte', (req, res)=>{
   const mensaje = req.body;
@@ -264,7 +558,7 @@ app.post('/soporte', (req, res)=>{
 })
 
 
-/**************************************************************************************************************/
+/*********************************************************************************************************************************************************/
 
 //Puerto de conexion
 app.listen(4000, ()=>{
