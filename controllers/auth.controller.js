@@ -2,7 +2,7 @@ const { response } = require('express');
 const UserModel = require('../models/usuario');
 const bcrypt = require('bcryptjs');
 const{ generarToken } = require('../utils/jwt');
-const { async } = require('rxjs');
+// const { async } = require('rxjs');0
 
 const crearUsuario =  async(req, res = response) => {
    
